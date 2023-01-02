@@ -133,9 +133,11 @@ if __name__ == '__main__':
 	forecast = noaa.forecast
 	logger.debug(forecast)
 	
+	"""
 	darksky = DarkSkyWeather(debug=debug)
 	current = darksky.weather
 	logger.debug(current)
+	"""
 	
 	draw = ImageDraw.Draw(bg)
 	
@@ -156,6 +158,7 @@ if __name__ == '__main__':
 	draw_text(date, (LR_PADDING, TB_PADDING - FONT_Y_OFFSET + 40), 'large')
 	draw_text(time, (pzwglobals.DISPLAY_WIDTH - LR_PADDING - 2, TB_PADDING - FONT_Y_OFFSET + 10), 'large', align="right")
 
+	"""
 	if current is not None:
 		if "temperature" in current:
 			temp_str = u"{}°".format(current["temperature"])
@@ -165,7 +168,8 @@ if __name__ == '__main__':
 		if "humidity" in current:
 			bottom_y = TB_PADDING + int((pzwglobals.DISPLAY_HEIGHT - TB_PADDING) / 2.375) - draw.textsize(temp_str, font=FONT_LARGE)[1] - FONT_Y_OFFSET
 			draw_text("{} %".format(current["humidity"]), (pzwglobals.DISPLAY_WIDTH - LR_PADDING, bottom_y), 'large', align="right")
-
+	"""
+	
 	# print today's icon
 	# we have some noaa icons that take precedence for display
 	# otherwise we use our map of darksky icon summaries to our icon images
@@ -188,10 +192,12 @@ if __name__ == '__main__':
 				icon_name = noaa.icon_map[noaa_icon]
 			
 		#no priority icon, use the darksky summary icon
+		"""
 		if icon_name is None:
 			if "summary" in current:
 				if current["summary"] in darksky.icon_map:
 					icon_name = darksky.icon_map[current["summary"]]
+		"""
 		
 		#something went wrong with darksky, use any noaa icon
 		if icon_name is None and noaa_icon is not None:
