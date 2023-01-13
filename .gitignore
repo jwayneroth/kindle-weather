@@ -1,5 +1,6 @@
 .DS_Store
 __py_cache__
+.env
 *.pyc
 *.swp
 fonts/

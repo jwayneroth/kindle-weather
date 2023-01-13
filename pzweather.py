@@ -11,7 +11,8 @@ import pzwglobals
 
 from lib.satelliteimage import SatelliteImage
 from lib.noaaforecast import NoaaForecast
-from lib.darkskyweather import DarkSkyWeather
+#from lib.darkskyweather import DarkSkyWeather
+from lib.openweather import OpenWeather
 
 logger = pzwglobals.logger
 
@@ -91,11 +92,13 @@ render a string onto our surface
 	:param align: optional align left or right
 """
 def draw_text(string, xy, font_name, align="left"):
-	over = 4 if font_name is 'small' else 6
+	over = 4 if font_name == 'small' else 6
 	font = fonts[font_name]
 	x,y = xy
-	if align is "right":
+	if align == "right":
 		w,h = draw.textsize(string, font=font)
+		#w = draw.textlength(string, font=font)
+		#logger.debug('text is {} pixels long'.format(w))
 		x = x - w
 	cx = x
 	for c in string:
@@ -108,11 +111,15 @@ def draw_text(string, xy, font_name, align="left"):
 		draw.text((cx,y+over), c, WHITE, font=font)
 		draw.text((cx+over,y+over), c, WHITE, font=font)
 		cw = draw.textsize(c, font=font)[0]
+		#cw = draw.textlength(string, font=font)
+		#logger.debug('text is {} pixels long'.format(cw))
 		cx = cx + cw
 	cx = x
 	for c in string:
 		draw.text((cx,y), c, BLACK, font=font)
 		cw = draw.textsize(c, font=font)[0]
+		#cw = draw.textlength(string, font=font)
+		#logger.debug('text is {} pixels long'.format(cw))
 		cx = cx + cw
 
 """
@@ -122,7 +129,7 @@ if __name__ == '__main__':
 	logger.info('pizero weather started at ' + datetime.now().strftime("%m/%d/%Y %I:%M %p"))
 	
 	debug = False
-	if args.debug is 'true' or args.debug is 'True':
+	if args.debug == 'true' or args.debug == 'True':
 		debug = True
 	
 	now = datetime.now()
@@ -139,6 +146,10 @@ if __name__ == '__main__':
 	logger.debug(current)
 	"""
 	
+	openwthr = OpenWeather(debug=debug)
+	current = openwthr.weather
+	logger.debug(current)
+
 	draw = ImageDraw.Draw(bg)
 	
 	# print today's day, time, current temp and humidity
@@ -147,18 +158,17 @@ if __name__ == '__main__':
 		day = "Wed"
 	
 	date = now.strftime("%m/%d")
-	if date[0] is "0":
+	if date[0] == "0":
 		date = date[1:]
 	
 	time = now.strftime("%I:%M %p")
-	if time[0] is "0":
+	if time[0] == "0":
 		time = time[1:]
 	
 	draw_text(day, (LR_PADDING, 10), 'medium')
 	draw_text(date, (LR_PADDING, TB_PADDING - FONT_Y_OFFSET + 40), 'large')
 	draw_text(time, (pzwglobals.DISPLAY_WIDTH - LR_PADDING - 2, TB_PADDING - FONT_Y_OFFSET + 10), 'large', align="right")
 
-	"""
 	if current is not None:
 		if "temperature" in current:
 			temp_str = u"{}°".format(current["temperature"])
@@ -168,7 +178,6 @@ if __name__ == '__main__':
 		if "humidity" in current:
 			bottom_y = TB_PADDING + int((pzwglobals.DISPLAY_HEIGHT - TB_PADDING) / 2.375) - draw.textsize(temp_str, font=FONT_LARGE)[1] - FONT_Y_OFFSET
 			draw_text("{} %".format(current["humidity"]), (pzwglobals.DISPLAY_WIDTH - LR_PADDING, bottom_y), 'large', align="right")
-	"""
 	
 	# print today's icon
 	# we have some noaa icons that take precedence for display
@@ -191,15 +200,18 @@ if __name__ == '__main__':
 			if noaa_icon in noaa.priority_icons:
 				icon_name = noaa.icon_map[noaa_icon]
 			
-		#no priority icon, use the darksky summary icon
-		"""
+		#no priority icon, use the openweather icon
 		if icon_name is None:
-			if "summary" in current:
-				if current["summary"] in darksky.icon_map:
-					icon_name = darksky.icon_map[current["summary"]]
-		"""
+			if "code" in current:
+				# use a day/night icon if weather code 800 or above
+				if int(current["code"]) >= 800 and "icon" in current:
+					if current["icon"] in openwthr.icon_map:
+						icon_name = openwthr.icon_map[current["icon"]]
+				else:
+					if current["code"] in openwthr.code_map:
+						icon_name = openwthr.code_map[current["code"]]
 		
-		#something went wrong with darksky, use any noaa icon
+		#something went wrong with openweather, use any noaa icon
 		if icon_name is None and noaa_icon is not None:
 			if noaa_icon in noaa.icon_map:
 				icon_name = noaa.icon_map[noaa_icon]
@@ -236,7 +248,9 @@ if __name__ == '__main__':
 			summary_lines = textwrap.wrap(summary_text, width=9)
 			summary_y = ry + line_height * 3 + 20
 			for s_line in summary_lines:
-				s_lineh = draw.textsize(s_line, font=FONT_SMALL)[1]
+				#s_lineh = draw.textsize(s_line, font=FONT_SMALL)[1]
+				s_linebox = draw.textbbox((0,0), s_line, font=FONT_SMALL)
+				s_lineh = s_linebox[3] - s_linebox[1]
 				draw_text(s_line, (rx, summary_y), 'small', align="left")
 				summary_y = summary_y + s_lineh
 		

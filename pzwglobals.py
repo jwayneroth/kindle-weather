@@ -1,5 +1,6 @@
 import os
 import logging
+from dotenv import load_dotenv
 
 LATITUDE = "40.74307"
 LONGITUDE = "-73.9182"
@@ -32,3 +33,9 @@ else:
 	logger.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 logger.addHandler(fh)
+
+load_dotenv()
+
+OPEN_WEATHER_APP_ID = os.getenv("OPEN_WEATHER_APP_ID")
+
+logger.debug("open weather api key {}".format(OPEN_WEATHER_APP_ID))
