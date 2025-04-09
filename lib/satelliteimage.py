@@ -14,7 +14,7 @@ DEFAULT_BG = pzwglobals.IMG_DIRECTORY + 'default-bg.png'
 DEFAULT_DITHER_ALGORITHM = 'bayer' #'yliluoma'
 DEFAULT_DITHER_THRESHOLD = 64
 
-NOAA_IMG_URL = "https://cdn.star.nesdis.noaa.gov/GOES16/ABI/SECTOR/ne/GEOCOLOR/"
+NOAA_IMG_URL = "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/ne/GEOCOLOR/"
 
 CROP_LEFT = 340 #254
 CROP_TOP = 160
