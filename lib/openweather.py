@@ -112,7 +112,9 @@ class OpenWeather():
 			if (tdiff < timedelta(minutes=10) or debug is True):
 				logger.info("using logged openweather data")
 				self.weather = {
-					'summary': log["summary"],
+					'code': log["code"],
+					'icon': log["icon"],
+					#'summary': log["summary"],
 					'temperature': log["temperature"],
 					'pressure': log["pressure"],
 					'humidity': log["humidity"],

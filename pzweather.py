@@ -171,7 +171,7 @@ if __name__ == '__main__':
 
 	if current is not None:
 		if "temperature" in current:
-			temp_str = u"{}°".format(current["temperature"])
+			temp_str = u"{}°".format(round(current["temperature"], 1))
 			mid_y = TB_PADDING + int((pzwglobals.DISPLAY_HEIGHT - TB_PADDING) / 4.75) - int(draw.textsize(temp_str, font=FONT_LARGE)[1] / 2) - int(FONT_Y_OFFSET / 2)
 			draw_text(temp_str, (pzwglobals.DISPLAY_WIDTH - LR_PADDING - 12, mid_y), 'large', align="right")
 
